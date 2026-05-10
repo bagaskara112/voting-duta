@@ -1,7 +1,109 @@
-export default function Home() {
+import Link from "next/link";
+import styles from "./page.module.css";
+import { prisma } from "@/lib/prisma";
+import Countdown from "@/components/Countdown/Countdown";
+
+import { auth } from "@/lib/auth";
+
+export const revalidate = 60; // Revalidate every 60 seconds
+
+async function getVotingSettings() {
+  try {
+    const settings = await prisma.votingSetting.findFirst();
+    return settings;
+  } catch (error) {
+    console.error("Failed to fetch voting settings:", error);
+    return null;
+  }
+}
+
+export default async function Home() {
+  const settings = await getVotingSettings();
+  const session = await auth();
+  
+  let hasVoted = false;
+  if (session?.user) {
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { hasVoted: true }
+    });
+    hasVoted = user?.hasVoted || false;
+  }
+
+  // Fallback settings if DB is empty/failing
+  const startTime = settings?.startTime.toISOString() || new Date().toISOString();
+  const endTime = settings?.endTime.toISOString() || new Date(Date.now() + 86400000).toISOString();
+  const isOpen = settings?.isOpen || false;
+
   return (
-    <main>
-      <div>Hello world!</div>
+    <main className={styles.main}>
+      <section className={styles.hero}>
+        <div className={styles.heroBackground}></div>
+        <div className={styles.heroOverlay}></div>
+        
+        <div className={`${styles.heroContent} animate-fade-in`}>
+          <div className={styles.logoContainer}>
+            <div className={styles.logo}>
+              <span className={styles.logoText}>DU</span>
+            </div>
+          </div>
+          <h1 className={styles.title}>
+            Pemilihan Duta Universitas 2026
+          </h1>
+          <p className={styles.subtitle}>
+            Tentukan masa depan representasi kampus kita. Satu suara Anda sangat berarti untuk memilih Duta Universitas yang berintegritas dan berwawasan luas.
+          </p>
+
+          <Countdown 
+            startTime={startTime} 
+            endTime={endTime} 
+            isOpen={isOpen} 
+            theme="light" 
+          />
+
+          <div style={{ marginTop: "40px", display: "flex", gap: "20px", justifyContent: "center", flexWrap: "wrap" }}>
+            {!hasVoted && (
+              <Link href="/login" className={styles.ctaButton}>
+                Masuk untuk Memilih
+              </Link>
+            )}
+            <Link href="/results" className={styles.secondaryButton}>
+              Lihat Hasil Langsung
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.infoSection}>
+        <div className="container">
+          <h2 style={{ textAlign: "center", marginBottom: "10px" }}>Informasi Pemilihan</h2>
+          <p style={{ textAlign: "center", color: "var(--color-text-light)" }}>
+            Perhatikan aturan dan tahapan sebelum memberikan suara Anda.
+          </p>
+
+          <div className={styles.infoGrid}>
+            <div className={styles.infoCard}>
+              <div className={styles.infoIcon}>🔒</div>
+              <h3>Aman & Rahasia</h3>
+              <p>Sistem ini menjamin kerahasiaan pilihan Anda. Gunakan akun Google kampus untuk memverifikasi identitas Anda dengan aman.</p>
+            </div>
+            <div className={styles.infoCard}>
+              <div className={styles.infoIcon}>1️⃣</div>
+              <h3>Satu Mahasiswa, Satu Suara</h3>
+              <p>Setiap mahasiswa hanya memiliki satu kesempatan untuk memilih. Pastikan Anda telah mempertimbangkan pilihan dengan matang.</p>
+            </div>
+            <div className={styles.infoCard}>
+              <div className={styles.infoIcon}>📊</div>
+              <h3>Transparan</h3>
+              <p>Hasil pemilihan dan log aktivitas dapat dipantau secara langsung untuk memastikan proses demokrasi berjalan dengan jujur dan adil.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer className={styles.footer}>
+        <p>&copy; 2026 Universitas Nusantara. Hak Cipta Dilindungi.</p>
+      </footer>
     </main>
   );
 }

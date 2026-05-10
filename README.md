@@ -1,34 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Web Vote - University Voting System
+
+This is a secure web-based voting system built for university-level elections.
+
+## Tech Stack
+- **Framework**: [Next.js 15+](https://nextjs.org) (App Router)
+- **Database**: PostgreSQL (via Supabase)
+- **ORM**: [Prisma](https://www.prisma.io/)
+- **Authentication**: NextAuth.js (Google OAuth for voters, Credentials for Admin)
+- **Styling**: Vanilla CSS / CSS Modules
+
+## Features
+- **Secure Voting**: Prevents double-voting using database transactions.
+- **Admin Dashboard**: Manage candidates, monitor logs, and control voting periods.
+- **Real-time Results**: Public dashboard for live election results.
+- **Google Integration**: Easy login for students using university-provided Google accounts.
 
 ## Getting Started
 
-First, run the development server:
+### 1. Prerequisites
+- Node.js (Latest LTS)
+- npm or pnpm
 
+### 2. Setup Environment Variables
+Clone `.env.example` to `.env` and fill in the required credentials:
+```bash
+cp .env.example .env
+```
+
+### 3. Install Dependencies
+```bash
+npm install
+```
+
+### 4. Database Setup
+Sync your database schema using Prisma:
+```bash
+npx prisma db push
+```
+
+### 5. Run Development Server
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

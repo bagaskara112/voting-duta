@@ -1,0 +1,133 @@
+// Prisma schema for Web Voting Duta Universitas
+// Database: Supabase PostgreSQL
+
+generator client {
+  provider   = "prisma-client-js"
+  output     = "../src/generated/prisma"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ==========================================
+// Enum: Role
+// ==========================================
+enum Role {
+  ADMIN
+  VOTER
+}
+
+// ==========================================
+// Table: users
+// Menyimpan data pemilih (voter) via Google OAuth
+// ==========================================
+model User {
+  id        String    @id @default(cuid())
+  name      String
+  email     String    @unique
+  googleId  String    @unique
+  image     String?
+  role      Role      @default(VOTER)
+  hasVoted  Boolean   @default(false)
+  votedAt   DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  vote     Vote?
+  voteLogs VoteLog[]
+
+  @@map("users")
+}
+
+// ==========================================
+// Table: admins
+// Menyimpan data admin (login via username/password)
+// Terpisah dari users karena mekanisme auth berbeda
+// ==========================================
+model Admin {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String   // bcrypt hashed
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admins")
+}
+
+// ==========================================
+// Table: candidates
+// Menyimpan data kandidat duta universitas
+// ==========================================
+model Candidate {
+  id          String   @id @default(cuid())
+  name        String
+  photo       String   // URL/path ke foto
+  faculty     String
+  major       String
+  vision      String   @db.Text
+  mission     String   @db.Text
+  programWork String   @db.Text
+  isActive    Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  votes Vote[]
+
+  @@map("candidates")
+}
+
+// ==========================================
+// Table: votes
+// Menyimpan suara user — 1 user = 1 vote (unique constraint)
+// ==========================================
+model Vote {
+  id          String   @id @default(cuid())
+  userId      String   @unique // CONSTRAINT: 1 user hanya bisa vote 1x
+  candidateId String
+  votedAt     DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  user      User      @relation(fields: [userId], references: [id])
+  candidate Candidate @relation(fields: [candidateId], references: [id])
+
+  @@map("votes")
+}
+
+// ==========================================
+// Table: vote_logs
+// Audit log untuk semua aktivitas penting
+// ==========================================
+model VoteLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  action      String   // "login", "vote", "failed_vote", "logout", etc.
+  description String?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@map("vote_logs")
+}
+
+// ==========================================
+// Table: voting_settings
+// Pengaturan voting (jadwal, status buka/tutup)
+// ==========================================
+model VotingSetting {
+  id          String   @id @default(cuid())
+  isOpen      Boolean  @default(false)
+  startTime   DateTime
+  endTime     DateTime
+  title       String   @default("Pemilihan Duta Universitas 2026")
+  description String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("voting_settings")
+}
