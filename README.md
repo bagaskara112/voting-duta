@@ -1,47 +1,60 @@
-# Web Vote - University Voting System
+# 🗳️ Web Vote - University Voting System
 
-This is a secure web-based voting system built for university-level elections.
+A secure, real-time web-based voting platform designed for university elections.
 
-## Tech Stack
+---
+
+## 🚀 Fitur Utama
+- **Keamanan Tinggi**: Mencegah pemungutan suara ganda menggunakan transaksi database.
+- **Dashboard Admin**: Kelola kandidat, pantau log aktivitas, dan kontrol periode voting.
+- **Hasil Real-time**: Dashboard publik untuk memantau hasil pemilihan secara langsung.
+- **Integrasi Google**: Login mudah bagi mahasiswa menggunakan akun Google institusi.
+- **Ekspor Data**: Fitur ekspor hasil voting ke format CSV/Excel untuk keperluan arsip.
+
+## 🛠️ Tech Stack
 - **Framework**: [Next.js 15+](https://nextjs.org) (App Router)
 - **Database**: PostgreSQL (via Supabase)
 - **ORM**: [Prisma](https://www.prisma.io/)
-- **Authentication**: NextAuth.js (Google OAuth for voters, Credentials for Admin)
+- **Autentikasi**: [NextAuth.js](https://next-auth.js.org/) (Google OAuth & Credentials)
 - **Styling**: Vanilla CSS / CSS Modules
 
-## Features
-- **Secure Voting**: Prevents double-voting using database transactions.
-- **Admin Dashboard**: Manage candidates, monitor logs, and control voting periods.
-- **Real-time Results**: Public dashboard for live election results.
-- **Google Integration**: Easy login for students using university-provided Google accounts.
+---
 
-## Getting Started
+## ⚙️ Persiapan Pengembangan
 
-### 1. Prerequisites
-- Node.js (Latest LTS)
-- npm or pnpm
+### 1. Prasyarat
+- Node.js (Versi LTS terbaru)
+- npm atau pnpm
 
-### 2. Setup Environment Variables
-Clone `.env.example` to `.env` and fill in the required credentials:
+### 2. Konfigurasi Environment
+Salin file `.env.example` menjadi `.env` dan isi kredensial yang diperlukan:
 ```bash
 cp .env.example .env
 ```
 
-### 3. Install Dependencies
+### 3. Instalasi Dependensi
 ```bash
 npm install
 ```
 
-### 4. Database Setup
-Sync your database schema using Prisma:
+### 4. Sinkronisasi Database
+Pastikan schema database Anda sinkron dengan Prisma:
 ```bash
 npx prisma db push
 ```
 
-### 5. Run Development Server
+### 5. Jalankan Server Lokal
 ```bash
 npm run dev
 ```
+Buka [http://localhost:3000](http://localhost:3000) di browser Anda.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
+
+## 📁 Struktur Proyek Utama
+- `/src/app/admin`: Panel kontrol administrator.
+- `/src/app/dashboard`: Antarmuka voting untuk mahasiswa.
+- `/src/app/results`: Tampilan hasil voting publik.
+- `/src/app/api`: Endpoint API untuk voting, logs, dan ekspor.
+- `/prisma`: Konfigurasi schema database.
 
