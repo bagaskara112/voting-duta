@@ -98,7 +98,15 @@ export default function LiveResults() {
             return (
               <div key={candidate.id} className={styles.candidateRow}>
                 <div className={`${styles.candidateAvatar} ${isLeading ? styles.goldAvatar : ''}`}>
-                  {candidate.order.toString().padStart(2, "0")}
+                  {candidate.photo ? (
+                    <img 
+                      src={candidate.photo} 
+                      alt={candidate.name} 
+                      className={styles.candidateAvatarImg}
+                    />
+                  ) : (
+                    candidate.order.toString().padStart(2, "0")
+                  )}
                 </div>
                 
                 <div className={styles.barWrapper}>

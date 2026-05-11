@@ -66,9 +66,19 @@ export default function CandidateGrid({ candidates, hasVoted, isOpen }: Candidat
       <div className={styles.grid}>
         {candidates.map((candidate) => (
           <div key={candidate.id} className={styles.card}>
-            {/* Photo Placeholder */}
-            <div className={styles.photoPlaceholder}>
-              {candidate.order.toString().padStart(2, "0")}
+            {/* Photo Container */}
+            <div className={styles.photoContainer}>
+              {candidate.photo ? (
+                <img 
+                  src={candidate.photo} 
+                  alt={candidate.name} 
+                  className={styles.candidatePhoto}
+                />
+              ) : (
+                <div className={styles.photoPlaceholder}>
+                  {candidate.order.toString().padStart(2, "0")}
+                </div>
+              )}
             </div>
             
             <div className={styles.cardContent}>
@@ -128,23 +138,35 @@ export default function CandidateGrid({ candidates, hasVoted, isOpen }: Candidat
               padding: "20px", 
               borderRadius: "8px", 
               borderLeft: "4px solid var(--color-primary)",
-              marginBottom: "20px"
+              marginBottom: "20px",
+              display: "flex",
+              gap: "20px",
+              alignItems: "flex-start"
             }}>
-              <h3 style={{ color: "var(--color-primary-dark)", marginBottom: "5px" }}>
-                {selectedCandidate.order.toString().padStart(2, "0")} - {selectedCandidate.name}
-              </h3>
-              <p style={{ color: "var(--color-text-light)", fontSize: "0.9rem", marginBottom: "15px" }}>
-                {selectedCandidate.faculty} | {selectedCandidate.major}
-              </p>
-              
-              <div style={{ marginBottom: "15px" }}>
-                <strong>Visi:</strong>
-                <p style={{ fontSize: "0.95rem", fontStyle: "italic", marginTop: "5px" }}>&ldquo;{selectedCandidate.vision}&rdquo;</p>
-              </div>
-              
-              <div>
-                <strong>Misi Utama:</strong>
-                <p style={{ fontSize: "0.95rem", whiteSpace: "pre-wrap", marginTop: "5px" }}>{selectedCandidate.mission.split("\n")[0]}</p>
+              {selectedCandidate.photo && (
+                <img 
+                  src={selectedCandidate.photo} 
+                  alt={selectedCandidate.name} 
+                  style={{ width: "100px", height: "130px", objectFit: "cover", borderRadius: "4px", flexShrink: 0 }}
+                />
+              )}
+              <div style={{ flex: 1 }}>
+                <h3 style={{ color: "var(--color-primary-dark)", marginBottom: "5px" }}>
+                  {selectedCandidate.order.toString().padStart(2, "0")} - {selectedCandidate.name}
+                </h3>
+                <p style={{ color: "var(--color-text-light)", fontSize: "0.9rem", marginBottom: "15px" }}>
+                  {selectedCandidate.faculty} | {selectedCandidate.major}
+                </p>
+                
+                <div style={{ marginBottom: "15px" }}>
+                  <strong>Visi:</strong>
+                  <p style={{ fontSize: "0.95rem", fontStyle: "italic", marginTop: "5px" }}>&ldquo;{selectedCandidate.vision}&rdquo;</p>
+                </div>
+                
+                <div>
+                  <strong>Misi Utama:</strong>
+                  <p style={{ fontSize: "0.95rem", whiteSpace: "pre-wrap", marginTop: "5px" }}>{selectedCandidate.mission.split("\n")[0]}</p>
+                </div>
               </div>
             </div>
 
