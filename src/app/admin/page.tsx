@@ -54,7 +54,14 @@ export default async function AdminPage() {
     <div className={styles.adminContainer}>
       <header className={styles.header}>
         <div className={`container ${styles.headerContent}`}>
-          <div className={styles.logo}>DUTA UNIV 2026 | ADMIN PANEL</div>
+          <div className={styles.logo}>
+            <img 
+              src="https://splytgbmvhobfvyidovq.supabase.co/storage/v1/object/public/voting-duta/logo_duta_kampus.jpeg" 
+              alt="Logo Duta" 
+              style={{ height: "30px", width: "30px", borderRadius: "50%", objectFit: "cover", marginRight: "10px" }}
+            />
+            DUTA UNISBA BLITAR 2026 | ADMIN PANEL
+          </div>
           <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
             <Link href="/" style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.9rem", textDecoration: "none" }}>
               Lihat Web Publik

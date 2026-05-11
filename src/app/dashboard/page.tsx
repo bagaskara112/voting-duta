@@ -72,7 +72,14 @@ export default async function DashboardPage() {
     <div className={styles.dashboardContainer}>
       <header className={styles.header}>
         <div className={`container ${styles.headerContent}`}>
-          <div className={styles.logo}>DUTA UNIV 2026</div>
+          <div className={styles.logo}>
+            <img 
+              src="https://splytgbmvhobfvyidovq.supabase.co/storage/v1/object/public/voting-duta/logo_duta_kampus.jpeg" 
+              alt="Logo Duta" 
+              style={{ height: "40px", width: "40px", borderRadius: "50%", objectFit: "cover", marginRight: "10px" }}
+            />
+            DUTA UNISBA BLITAR 2026
+          </div>
           <div className={styles.userInfo}>
             <span className={styles.userName}>{user.name}</span>
             <LogoutButton />

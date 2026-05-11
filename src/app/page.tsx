@@ -46,11 +46,15 @@ export default async function Home() {
         <div className={`${styles.heroContent} animate-fade-in`}>
           <div className={styles.logoContainer}>
             <div className={styles.logo}>
-              <span className={styles.logoText}>DU</span>
+              <img 
+                src="https://splytgbmvhobfvyidovq.supabase.co/storage/v1/object/public/voting-duta/logo_duta_kampus.jpeg" 
+                alt="Logo Duta" 
+                className={styles.logoImage} 
+              />
             </div>
           </div>
           <h1 className={styles.title}>
-            Pemilihan Duta Universitas 2026
+            Pemilihan Duta Universitas Islam Balitar Blitar 2026
           </h1>
           <p className={styles.subtitle}>
             Tentukan masa depan representasi kampus kita. Satu suara Anda sangat berarti untuk memilih Duta Universitas yang berintegritas dan berwawasan luas.
@@ -104,7 +108,7 @@ export default async function Home() {
       </section>
 
       <footer className={styles.footer}>
-        <p>&copy; 2026 Universitas Nusantara. Hak Cipta Dilindungi.</p>
+        <p>&copy; 2026 Badan Eksekutif Mahasiswa Unisba Blitar. Hak Cipta Dilindungi.</p>
       </footer>
     </main>
   );
