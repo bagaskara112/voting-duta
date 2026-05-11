@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import styles from "./results.module.css";
+import Image from "next/image";
 import { Candidate } from "@/generated/prisma";
 
 interface CandidateResult extends Candidate {
@@ -99,9 +100,11 @@ export default function LiveResults() {
               <div key={candidate.id} className={styles.candidateRow}>
                 <div className={`${styles.candidateAvatar} ${isLeading ? styles.goldAvatar : ''}`}>
                   {candidate.photo ? (
-                    <img 
+                    <Image 
                       src={candidate.photo} 
                       alt={candidate.name} 
+                      width={60}
+                      height={60}
                       className={styles.candidateAvatarImg}
                     />
                   ) : (

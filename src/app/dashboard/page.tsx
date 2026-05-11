@@ -5,6 +5,7 @@ import styles from "./dashboard.module.css";
 import Countdown from "@/components/Countdown/Countdown";
 import LogoutButton from "./LogoutButton";
 import CandidateGrid from "./CandidateGrid";
+import Image from "next/image";
 
 export const revalidate = 0; // Don't cache this page (dynamic per user)
 
@@ -73,10 +74,12 @@ export default async function DashboardPage() {
       <header className={styles.header}>
         <div className={`container ${styles.headerContent}`}>
           <div className={styles.logo}>
-            <img 
+            <Image 
               src="https://splytgbmvhobfvyidovq.supabase.co/storage/v1/object/public/voting-duta/logo_duta_kampus.jpeg" 
               alt="Logo Duta" 
-              style={{ height: "40px", width: "40px", borderRadius: "50%", objectFit: "cover", marginRight: "10px" }}
+              width={40}
+              height={40}
+              style={{ borderRadius: "50%", objectFit: "cover", marginRight: "10px" }}
             />
             DUTA UNISBA BLITAR 2026
           </div>

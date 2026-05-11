@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./dashboard.module.css";
 import Modal from "@/components/Modal/Modal";
+import Image from "next/image";
 import { Candidate } from "@/generated/prisma";
 
 interface CandidateGridProps {
@@ -69,9 +70,11 @@ export default function CandidateGrid({ candidates, hasVoted, isOpen }: Candidat
             {/* Photo Container */}
             <div className={styles.photoContainer}>
               {candidate.photo ? (
-                <img 
+                <Image 
                   src={candidate.photo} 
                   alt={candidate.name} 
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   className={styles.candidatePhoto}
                 />
               ) : (
@@ -144,10 +147,12 @@ export default function CandidateGrid({ candidates, hasVoted, isOpen }: Candidat
               alignItems: "flex-start"
             }}>
               {selectedCandidate.photo && (
-                <img 
+                <Image 
                   src={selectedCandidate.photo} 
                   alt={selectedCandidate.name} 
-                  style={{ width: "100px", height: "130px", objectFit: "cover", borderRadius: "4px", flexShrink: 0 }}
+                  width={100}
+                  height={130}
+                  style={{ objectFit: "cover", borderRadius: "4px", flexShrink: 0 }}
                 />
               )}
               <div style={{ flex: 1 }}>

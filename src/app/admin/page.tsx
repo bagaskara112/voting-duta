@@ -5,6 +5,7 @@ import styles from "./admin.module.css";
 import AdminDashboard from "./AdminDashboard";
 import Link from "next/link";
 import LogoutButton from "../dashboard/LogoutButton";
+import Image from "next/image";
 
 export const revalidate = 0; // Don't cache admin dashboard
 
@@ -55,10 +56,12 @@ export default async function AdminPage() {
       <header className={styles.header}>
         <div className={`container ${styles.headerContent}`}>
           <div className={styles.logo}>
-            <img 
+            <Image 
               src="https://splytgbmvhobfvyidovq.supabase.co/storage/v1/object/public/voting-duta/logo_duta_kampus.jpeg" 
               alt="Logo Duta" 
-              style={{ height: "30px", width: "30px", borderRadius: "50%", objectFit: "cover", marginRight: "10px" }}
+              width={30}
+              height={30}
+              style={{ borderRadius: "50%", objectFit: "cover", marginRight: "10px" }}
             />
             DUTA UNISBA BLITAR 2026 | ADMIN PANEL
           </div>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./page.module.css";
 import { prisma } from "@/lib/prisma";
 import Countdown from "@/components/Countdown/Countdown";
@@ -46,10 +47,13 @@ export default async function Home() {
         <div className={`${styles.heroContent} animate-fade-in`}>
           <div className={styles.logoContainer}>
             <div className={styles.logo}>
-              <img 
+              <Image 
                 src="https://splytgbmvhobfvyidovq.supabase.co/storage/v1/object/public/voting-duta/logo_duta_kampus.jpeg" 
                 alt="Logo Duta" 
+                width={100}
+                height={100}
                 className={styles.logoImage} 
+                priority
               />
             </div>
           </div>
