@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Pemilihan Duta Universitas 2026",
-  description: "Sistem E-Voting Resmi Pemilihan Duta Universitas 2026",
+  title: "Pemilihan Duta UNISBA Blitar 2026",
+  description: "Sistem E-Voting Resmi Pemilihan Duta UNISBA Blitar 2026",
 };
 
 export default function RootLayout({

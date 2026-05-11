@@ -4,7 +4,7 @@ import LiveResults from "./LiveResults";
 import Image from "next/image";
 
 export const metadata = {
-  title: "Live Results - Pemilihan Duta Universitas",
+  title: "Live Results - Pemilihan Duta UNISBA Blitar",
   description: "Pantau hasil perolehan suara secara langsung dan transparan.",
 };
 
@@ -24,7 +24,7 @@ export default function ResultsPage() {
         />
         <h1 className={styles.title}>Live Quick Count</h1>
         <p className={styles.subtitle}>
-          Hasil perolehan suara Pemilihan Duta Universitas 2026 yang diperbarui secara langsung.
+          Hasil perolehan suara Pemilihan Duta UNISBA Blitar 2026 yang diperbarui secara langsung.
         </p>
       </header>
 

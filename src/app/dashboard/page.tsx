@@ -117,7 +117,7 @@ export default async function DashboardPage() {
           <div className={styles.candidateSection}>
             <div className={styles.sectionHeader}>
               <h3 style={{ fontSize: "1.5rem", color: "var(--color-primary-dark)" }}>
-                Daftar Kandidat Duta Universitas
+                Daftar Kandidat Duta UNISBA Blitar
               </h3>
               <span style={{ color: "var(--color-text-light)" }}>
                 Total: {candidates.length} Kandidat

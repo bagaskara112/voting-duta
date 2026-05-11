@@ -61,7 +61,7 @@ export default async function Home() {
             Pemilihan Duta Universitas Islam Balitar Blitar 2026
           </h1>
           <p className={styles.subtitle}>
-            Tentukan masa depan representasi kampus kita. Satu suara Anda sangat berarti untuk memilih Duta Universitas yang berintegritas dan berwawasan luas.
+            Tentukan masa depan representasi kampus kita. Satu suara Anda sangat berarti untuk memilih Duta UNISBA Blitar yang berintegritas dan berwawasan luas.
           </p>
 
           <Countdown 
