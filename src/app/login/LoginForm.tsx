@@ -30,7 +30,7 @@ export default function LoginForm() {
           />
           <h1 className={styles.title}>Masuk</h1>
           <p className={styles.subtitle}>
-            Gunakan akun Google UNISBA Anda
+            Gunakan akun Google Anda
           </p>
         </div>
 
