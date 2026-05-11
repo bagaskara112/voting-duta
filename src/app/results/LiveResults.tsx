@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import styles from "./results.module.css";
 import { Candidate } from "@/generated/prisma";
 
@@ -16,44 +16,57 @@ interface VoteLog {
   createdAt: string;
 }
 
+async function fetchLiveData() {
+  const [resResults, resLogs] = await Promise.all([
+    fetch("/api/results"),
+    fetch("/api/logs")
+  ]);
+
+  const dataResults = await resResults.json();
+  const dataLogs = await resLogs.json();
+
+  return { dataResults, dataLogs };
+}
+
 export default function LiveResults() {
   const [results, setResults] = useState<CandidateResult[]>([]);
   const [totalVotes, setTotalVotes] = useState(0);
   const [logs, setLogs] = useState<VoteLog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  const fetchData = async () => {
-    try {
-      const [resResults, resLogs] = await Promise.all([
-        fetch("/api/results"),
-        fetch("/api/logs")
-      ]);
-
-      const dataResults = await resResults.json();
-      const dataLogs = await resLogs.json();
-
-      if (dataResults.success) {
-        setResults(dataResults.data);
-        setTotalVotes(dataResults.totalVotesAll);
-      }
-      
-      if (dataLogs.success) {
-        setLogs(dataLogs.data);
-      }
-      
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Error fetching live data:", error);
-    }
-  };
+  const isMounted = useRef(true);
 
   useEffect(() => {
+    isMounted.current = true;
+
+    const loadData = async () => {
+      try {
+        const { dataResults, dataLogs } = await fetchLiveData();
+        if (!isMounted.current) return;
+
+        if (dataResults.success) {
+          setResults(dataResults.data);
+          setTotalVotes(dataResults.totalVotesAll);
+        }
+
+        if (dataLogs.success) {
+          setLogs(dataLogs.data);
+        }
+
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching live data:", error);
+      }
+    };
+
     // Initial fetch
-    fetchData();
+    loadData();
 
     // Poll every 10 seconds
-    const interval = setInterval(fetchData, 10000);
-    return () => clearInterval(interval);
+    const interval = setInterval(loadData, 10000);
+    return () => {
+      isMounted.current = false;
+      clearInterval(interval);
+    };
   }, []);
 
   if (isLoading) {
@@ -79,7 +92,7 @@ export default function LiveResults() {
         </div>
 
         <div>
-          {results.map((candidate, index) => {
+          {results.map((candidate) => {
             const isLeading = candidate.voteCount === highestVotes && highestVotes > 0;
             
             return (

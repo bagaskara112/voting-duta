@@ -55,7 +55,7 @@ export default function CandidateGrid({ candidates, hasVoted, isOpen }: Candidat
         setNotification({ message: data.message || "Gagal merekam suara.", type: "error" });
         setIsSubmitting(false);
       }
-    } catch (error) {
+    } catch {
       setNotification({ message: "Terjadi kesalahan jaringan. Silakan coba lagi.", type: "error" });
       setIsSubmitting(false);
     }
@@ -139,7 +139,7 @@ export default function CandidateGrid({ candidates, hasVoted, isOpen }: Candidat
               
               <div style={{ marginBottom: "15px" }}>
                 <strong>Visi:</strong>
-                <p style={{ fontSize: "0.95rem", fontStyle: "italic", marginTop: "5px" }}>"{selectedCandidate.vision}"</p>
+                <p style={{ fontSize: "0.95rem", fontStyle: "italic", marginTop: "5px" }}>&ldquo;{selectedCandidate.vision}&rdquo;</p>
               </div>
               
               <div>

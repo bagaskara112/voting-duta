@@ -25,7 +25,7 @@ export async function toggleVotingStatus(isOpen: boolean) {
   return { success: true, isOpen };
 }
 
-export async function addCandidate(data: any) {
+export async function addCandidate(data: { order: string; name: string; faculty: string; major: string; vision: string; mission: string; photo: string; programWork?: string; isActive: boolean }) {
   await verifyAdmin();
   
   const candidate = await prisma.candidate.create({
@@ -36,7 +36,8 @@ export async function addCandidate(data: any) {
       major: data.major,
       vision: data.vision,
       mission: data.mission,
-      photoUrl: data.photoUrl || null,
+      photo: data.photo || "",
+      programWork: data.programWork || "",
     }
   });
   
@@ -45,7 +46,7 @@ export async function addCandidate(data: any) {
   return { success: true, candidate };
 }
 
-export async function updateCandidate(id: string, data: any) {
+export async function updateCandidate(id: string, data: { order: string; name: string; faculty: string; major: string; vision: string; mission: string; photo: string; programWork?: string; isActive: boolean }) {
   await verifyAdmin();
   
   const candidate = await prisma.candidate.update({
@@ -57,7 +58,8 @@ export async function updateCandidate(id: string, data: any) {
       major: data.major,
       vision: data.vision,
       mission: data.mission,
-      photoUrl: data.photoUrl || null,
+      photo: data.photo || "",
+      programWork: data.programWork || undefined,
       isActive: data.isActive,
     }
   });

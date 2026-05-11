@@ -57,10 +57,12 @@ export default async function DashboardPage() {
     redirect("/results");
   }
 
-  const startTime = settings?.startTime.toISOString() || new Date().toISOString();
-  const endTime = settings?.endTime.toISOString() || new Date(Date.now() + 86400000).toISOString();
+  const fallbackDate = new Date();
+  const fallbackEndDate = new Date(fallbackDate.getTime() + 86400000);
+  const startTime = settings?.startTime.toISOString() || fallbackDate.toISOString();
+  const endTime = settings?.endTime.toISOString() || fallbackEndDate.toISOString();
   const isOpen = settings?.isOpen || false;
-  
+   
   // Use a combination of DB isOpen and time to determine actual logic
   const now = new Date();
   const isTimeOpen = now >= new Date(startTime) && now <= new Date(endTime);

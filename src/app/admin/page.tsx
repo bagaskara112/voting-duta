@@ -90,7 +90,11 @@ export default async function AdminPage() {
             isVotingOpen={isOpen} 
             totalVoters={totalVoters}
             totalVotes={totalVotes}
-            logs={logs}
+            logs={logs.map(log => ({
+              ...log,
+              createdAt: log.createdAt.toISOString(),
+              description: log.description || ""
+            }))}
             results={results}
           />
         </div>
@@ -98,3 +102,4 @@ export default async function AdminPage() {
     </div>
   );
 }
+ 

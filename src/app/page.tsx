@@ -31,10 +31,12 @@ export default async function Home() {
   }
 
   // Fallback settings if DB is empty/failing
-  const startTime = settings?.startTime.toISOString() || new Date().toISOString();
-  const endTime = settings?.endTime.toISOString() || new Date(Date.now() + 86400000).toISOString();
+  const fallbackDate = new Date();
+  const fallbackEndDate = new Date(fallbackDate.getTime() + 86400000);
+  const startTime = settings?.startTime.toISOString() || fallbackDate.toISOString();
+  const endTime = settings?.endTime.toISOString() || fallbackEndDate.toISOString();
   const isOpen = settings?.isOpen || false;
-
+ 
   return (
     <main className={styles.main}>
       <section className={styles.hero}>

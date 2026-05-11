@@ -40,7 +40,7 @@ export async function POST(req: Request) {
 
     // 3. Database Transaction (Prevent Double Voting)
     // We use a transaction to ensure atomicity. If any of these fail, the whole operation rolls back.
-    const result = await prisma.$transaction(async (tx) => {
+    void await prisma.$transaction(async (tx) => {
       // Check if user has already voted (lock row for update to prevent race conditions if possible, 
       // but Prisma handles this gracefully with unique constraints on the Vote table).
       const user = await tx.user.findUnique({
@@ -61,7 +61,7 @@ export async function POST(req: Request) {
       }
 
       // Record the vote
-      const vote = await tx.vote.create({
+      await tx.vote.create({
         data: {
           userId: user.id,
           candidateId: candidate.id,
@@ -86,8 +86,6 @@ export async function POST(req: Request) {
           description: `${user.name} telah memberikan hak suaranya.`,
         },
       });
-
-      return vote;
     });
 
     return NextResponse.json({
@@ -95,17 +93,22 @@ export async function POST(req: Request) {
       message: "Suara Anda berhasil direkam. Terima kasih telah berpartisipasi!",
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Voting error:", error);
 
-    if (error.message === "ALREADY_VOTED") {
+    const message = error instanceof Error ? error.message : "";
+    const code = typeof error === "object" && error !== null && "code" in error
+      ? (error as { code: string }).code
+      : "";
+
+    if (message === "ALREADY_VOTED") {
       return NextResponse.json(
         { success: false, message: "Anda sudah memberikan hak suara. Satu akun hanya dapat memilih satu kali." },
         { status: 403 }
       );
     }
-
-    if (error.message === "INVALID_CANDIDATE") {
+  
+    if (message === "INVALID_CANDIDATE") {
       return NextResponse.json(
         { success: false, message: "Kandidat tidak valid atau sudah tidak aktif." },
         { status: 400 }
@@ -113,7 +116,7 @@ export async function POST(req: Request) {
     }
 
     // Prisma Unique Constraint violation on Vote table (userId is unique)
-    if (error.code === 'P2002') {
+    if (code === 'P2002') {
       return NextResponse.json(
         { success: false, message: "Anda sudah memberikan hak suara (Terdeteksi oleh sistem)." },
         { status: 403 }

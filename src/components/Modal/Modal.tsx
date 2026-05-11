@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import styles from "./Modal.module.css";
 
@@ -15,6 +15,8 @@ interface ModalProps {
   isLoading?: boolean;
 }
 
+const emptySubscribe = () => () => {};
+
 export default function Modal({
   isOpen,
   onClose,
@@ -25,16 +27,19 @@ export default function Modal({
   cancelText = "Batal",
   isLoading = false,
 }: ModalProps) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
 
   useEffect(() => {
-    setMounted(true);
     if (isOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
     }
-
+ 
     return () => {
       document.body.style.overflow = "unset";
     };

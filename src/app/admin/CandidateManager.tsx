@@ -30,7 +30,7 @@ export default function CandidateManager({ initialCandidates, isVotingOpen }: Ca
     major: "",
     vision: "",
     mission: "",
-    photoUrl: "",
+    photo: "",
     isActive: true
   });
 
@@ -39,7 +39,7 @@ export default function CandidateManager({ initialCandidates, isVotingOpen }: Ca
     try {
       const res = await toggleVotingStatus(!isOpen);
       if (res.success) setIsOpen(res.isOpen);
-    } catch (e) {
+    } catch {
       alert("Gagal mengubah status voting.");
     }
     setIsLoading(false);
@@ -54,7 +54,7 @@ export default function CandidateManager({ initialCandidates, isVotingOpen }: Ca
       major: "",
       vision: "",
       mission: "",
-      photoUrl: "",
+      photo: "",
       isActive: true
     });
     setNotification(null);
@@ -70,7 +70,7 @@ export default function CandidateManager({ initialCandidates, isVotingOpen }: Ca
       major: candidate.major,
       vision: candidate.vision,
       mission: candidate.mission,
-      photoUrl: candidate.photoUrl || "",
+      photo: candidate.photo || "",
       isActive: candidate.isActive
     });
     setNotification(null);
@@ -103,7 +103,7 @@ export default function CandidateManager({ initialCandidates, isVotingOpen }: Ca
           setIsModalOpen(false);
         }
       }
-    } catch (error) {
+    } catch {
       setNotification({ message: "Terjadi kesalahan saat menyimpan data.", type: "error" });
     }
     setIsLoading(false);
@@ -122,7 +122,7 @@ export default function CandidateManager({ initialCandidates, isVotingOpen }: Ca
       } else {
         setNotification({ message: res.message || "Gagal menghapus.", type: "error" });
       }
-    } catch (error) {
+    } catch {
       setNotification({ message: "Terjadi kesalahan server.", type: "error" });
     }
     setIsLoading(false);
@@ -235,8 +235,8 @@ export default function CandidateManager({ initialCandidates, isVotingOpen }: Ca
             type="text" 
             className={styles.input} 
             placeholder="https://..."
-            value={formData.photoUrl} 
-            onChange={e => setFormData({...formData, photoUrl: e.target.value})}
+            value={formData.photo} 
+            onChange={e => setFormData({...formData, photo: e.target.value})}
           />
           <p style={{ fontSize: "0.8rem", color: "var(--color-text-light)", marginTop: "4px" }}>
             Untuk saat ini, masukkan link URL gambar (misal dari Google Drive/Imgur).

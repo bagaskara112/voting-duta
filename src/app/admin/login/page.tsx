@@ -31,12 +31,12 @@ export default function AdminLoginPage() {
       } else {
         router.push("/admin"); // Redirect directly to /admin, NOT /dashboard
       }
-    } catch (err) {
+    } catch {
       setError("Terjadi kesalahan. Silakan coba lagi.");
       setIsLoading(false);
     }
   };
-
+ 
   return (
     <div className={styles.container}>
       <div className={`${styles.loginCard} animate-fade-in`}>

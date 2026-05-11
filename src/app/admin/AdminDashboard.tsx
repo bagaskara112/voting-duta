@@ -4,15 +4,29 @@ import { useState } from "react";
 import styles from "./admin.module.css";
 import CandidateManager from "./CandidateManager";
 import { Candidate } from "@/generated/prisma";
-import Link from "next/link";
+
+interface LogEntry {
+  id: string;
+  createdAt: string;
+  action: string;
+  description: string;
+  user?: { name: string; email: string } | null;
+}
+
+interface ResultEntry {
+  id: string;
+  name: string;
+  voteCount: number;
+  percentage: number;
+}
 
 interface AdminDashboardProps {
   candidates: Candidate[];
   isVotingOpen: boolean;
   totalVoters: number;
   totalVotes: number;
-  logs: any[];
-  results: any[];
+  logs: LogEntry[];
+  results: ResultEntry[];
 }
 
 export default function AdminDashboard({
@@ -27,7 +41,6 @@ export default function AdminDashboard({
 
   // Calculate Pie Chart logic
   const votedPercentage = totalVoters > 0 ? (totalVotes / totalVoters) * 100 : 0;
-  const notVotedPercentage = 100 - votedPercentage;
   const pieConicGradient = `conic-gradient(var(--color-primary) 0% ${votedPercentage}%, #e0e0e0 ${votedPercentage}% 100%)`;
 
   return (
@@ -68,7 +81,7 @@ export default function AdminDashboard({
                 {results.length === 0 ? (
                   <p style={{ color: "var(--color-text-light)", textAlign: "center" }}>Belum ada data suara</p>
                 ) : (
-                  results.map((r: any) => (
+                  results.map((r) => (
                     <div key={r.id} style={{ marginBottom: "15px" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "5px", fontSize: "0.9rem", fontWeight: "bold" }}>
                         <span>{r.name}</span>
@@ -135,7 +148,7 @@ export default function AdminDashboard({
                 {logs.length === 0 ? (
                   <tr><td colSpan={4} style={{ textAlign: "center" }}>Belum ada log aktivitas.</td></tr>
                 ) : (
-                  logs.map((log: any) => (
+                  logs.map((log) => (
                     <tr key={log.id}>
                       <td>{new Date(log.createdAt).toLocaleString("id-ID")}</td>
                       <td>{log.user ? `${log.user.name} (${log.user.email})` : "Sistem"}</td>
