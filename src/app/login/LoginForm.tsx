@@ -20,6 +20,11 @@ export default function LoginForm() {
           ← Kembali
         </Link>
         <div className={styles.header}>
+          <img 
+            src="https://splytgbmvhobfvyidovq.supabase.co/storage/v1/object/public/voting-duta/logo_duta_kampus.jpeg" 
+            alt="Logo Duta" 
+            style={{ width: "80px", height: "80px", borderRadius: "50%", objectFit: "cover", margin: "0 auto 20px", display: "block", border: "2px solid var(--color-accent)", padding: "2px", background: "white" }}
+          />
           <h1 className={styles.title}>Masuk</h1>
           <p className={styles.subtitle}>
             Gunakan akun Google universitas Anda
