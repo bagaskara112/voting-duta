@@ -3,7 +3,7 @@
 import { useState } from "react";
 import styles from "./admin.module.css";
 import CandidateManager from "./CandidateManager";
-import { Candidate } from "@prisma/client";
+import { Candidate } from "@/generated/prisma";
 import Link from "next/link";
 
 interface AdminDashboardProps {

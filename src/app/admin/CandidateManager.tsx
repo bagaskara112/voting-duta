@@ -3,7 +3,7 @@
 import { useState } from "react";
 import styles from "./admin.module.css";
 import Modal from "@/components/Modal/Modal";
-import { Candidate } from "@prisma/client";
+import { Candidate } from "@/generated/prisma";
 import { addCandidate, updateCandidate, deleteCandidate, toggleVotingStatus } from "./actions";
 
 interface CandidateManagerProps {

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import styles from "./results.module.css";
-import { Candidate } from "@prisma/client";
+import { Candidate } from "@/generated/prisma";
 
 interface CandidateResult extends Candidate {
   voteCount: number;

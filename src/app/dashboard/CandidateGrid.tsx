@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./dashboard.module.css";
 import Modal from "@/components/Modal/Modal";
-import { Candidate } from "@prisma/client";
+import { Candidate } from "@/generated/prisma";
 
 interface CandidateGridProps {
   candidates: Candidate[];
