@@ -2,21 +2,26 @@ import Link from "next/link";
 import Image from "next/image";
 import styles from "./page.module.css";
 import { prisma } from "@/lib/prisma";
+import { unstable_cache } from "next/cache";
 import Countdown from "@/components/Countdown/Countdown";
 
 import { auth } from "@/lib/auth";
 
 export const revalidate = 60; // Revalidate every 60 seconds
 
-async function getVotingSettings() {
-  try {
-    const settings = await prisma.votingSetting.findFirst();
-    return settings;
-  } catch (error) {
-    console.error("Failed to fetch voting settings:", error);
-    return null;
-  }
-}
+const getVotingSettings = unstable_cache(
+  async () => {
+    try {
+      const settings = await prisma.votingSetting.findFirst();
+      return settings;
+    } catch (error) {
+      console.error("Failed to fetch voting settings:", error);
+      return null;
+    }
+  },
+  ["voting-settings"],
+  { revalidate: 60, tags: ["voting-settings"] }
+);
 
 export default async function Home() {
   const settings = await getVotingSettings();
@@ -24,11 +29,7 @@ export default async function Home() {
   
   let hasVoted = false;
   if (session?.user) {
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { hasVoted: true }
-    });
-    hasVoted = user?.hasVoted || false;
+    hasVoted = session.user.hasVoted || false;
   }
 
   // Fallback settings if DB is empty/failing
@@ -41,7 +42,15 @@ export default async function Home() {
   return (
     <main className={styles.main}>
       <section className={styles.hero}>
-        <div className={styles.heroBackground}></div>
+        <Image 
+          src="/images/bg/university.png"
+          alt="University Background"
+          fill
+          priority
+          sizes="100vw"
+          className={styles.heroBackground}
+          style={{ objectFit: "cover", objectPosition: "center" }}
+        />
         <div className={styles.heroOverlay}></div>
         
         <div className={`${styles.heroContent} animate-fade-in`}>

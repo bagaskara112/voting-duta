@@ -35,7 +35,6 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  vote     Vote?
   voteLogs VoteLog[]
 
   @@map("users")
@@ -86,14 +85,11 @@ model Candidate {
 // ==========================================
 model Vote {
   id          String   @id @default(cuid())
-  userId      String   @unique // CONSTRAINT: 1 user hanya bisa vote 1x
   candidateId String
   votedAt     DateTime @default(now())
   createdAt   DateTime @default(now())
 
-  user      User      @relation(fields: [userId], references: [id])
   candidate Candidate @relation(fields: [candidateId], references: [id])
-
   @@map("votes")
 }
 

@@ -60,10 +60,9 @@ export async function POST(req: Request) {
         throw new Error("INVALID_CANDIDATE");
       }
 
-      // Record the vote
+      // Record the anonymous vote
       await tx.vote.create({
         data: {
-          userId: user.id,
           candidateId: candidate.id,
         },
       });
