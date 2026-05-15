@@ -25,6 +25,22 @@ export async function toggleVotingStatus(isOpen: boolean) {
   return { success: true, isOpen };
 }
 
+export async function updateVotingSchedule(startTimeStr: string, endTimeStr: string) {
+  await verifyAdmin();
+  
+  await prisma.votingSetting.updateMany({
+    data: { 
+      startTime: new Date(startTimeStr),
+      endTime: new Date(endTimeStr)
+    }
+  });
+  
+  revalidatePath("/");
+  revalidatePath("/dashboard");
+  revalidatePath("/admin");
+  return { success: true };
+}
+
 export async function addCandidate(data: { order: string; name: string; faculty: string; major: string; vision: string; mission: string; photo: string; programWork?: string; isActive: boolean }) {
   await verifyAdmin();
   

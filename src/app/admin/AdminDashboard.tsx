@@ -4,6 +4,7 @@ import { useState } from "react";
 import styles from "./admin.module.css";
 import CandidateManager from "./CandidateManager";
 import { Candidate } from "@/generated/prisma";
+import { updateVotingSchedule, toggleVotingStatus } from "./actions";
 
 interface LogEntry {
   id: string;
@@ -27,6 +28,10 @@ interface AdminDashboardProps {
   totalVotes: number;
   logs: LogEntry[];
   results: ResultEntry[];
+  settings?: {
+    startTime: string;
+    endTime: string;
+  };
 }
 
 export default function AdminDashboard({
@@ -35,9 +40,31 @@ export default function AdminDashboard({
   totalVoters,
   totalVotes,
   logs,
-  results
+  results,
+  settings
 }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState("overview");
+
+  // State for Schedule CRUD
+  const [startTime, setStartTime] = useState(
+    settings?.startTime ? new Date(settings.startTime).toISOString().slice(0, 16) : ""
+  );
+  const [endTime, setEndTime] = useState(
+    settings?.endTime ? new Date(settings.endTime).toISOString().slice(0, 16) : ""
+  );
+  const [isUpdatingSchedule, setIsUpdatingSchedule] = useState(false);
+
+  const handleUpdateSchedule = async () => {
+    if (!startTime || !endTime) return alert("Pilih tanggal mulai dan selesai!");
+    setIsUpdatingSchedule(true);
+    try {
+      const res = await updateVotingSchedule(new Date(startTime).toISOString(), new Date(endTime).toISOString());
+      if (res.success) alert("Jadwal pemilihan berhasil diperbarui!");
+    } catch (error) {
+      alert("Terjadi kesalahan saat memperbarui jadwal.");
+    }
+    setIsUpdatingSchedule(false);
+  };
 
   // Calculate Pie Chart logic
   const votedPercentage = totalVoters > 0 ? (totalVotes / totalVoters) * 100 : 0;
@@ -115,6 +142,40 @@ export default function AdminDashboard({
                     </div>
                     <strong>{totalVoters - totalVotes}</strong>
                   </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className={styles.chartCard} style={{ gridColumn: "1 / -1" }}>
+              <h3 className={styles.chartTitle}>Atur Jadwal Pemilihan</h3>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", marginTop: "20px" }}>
+                <div style={{ flex: 1, minWidth: "200px" }}>
+                  <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold", fontSize: "0.9rem" }}>Waktu Mulai</label>
+                  <input 
+                    type="datetime-local" 
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                    className={styles.inputField} 
+                  />
+                </div>
+                <div style={{ flex: 1, minWidth: "200px" }}>
+                  <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold", fontSize: "0.9rem" }}>Waktu Berakhir</label>
+                  <input 
+                    type="datetime-local" 
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
+                    className={styles.inputField} 
+                  />
+                </div>
+                <div style={{ display: "flex", alignItems: "flex-end" }}>
+                  <button 
+                    onClick={handleUpdateSchedule}
+                    disabled={isUpdatingSchedule}
+                    className={styles.primaryBtn}
+                    style={{ height: "42px", padding: "0 20px" }}
+                  >
+                    {isUpdatingSchedule ? "Menyimpan..." : "Simpan Jadwal"}
+                  </button>
                 </div>
               </div>
             </div>

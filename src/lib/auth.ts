@@ -1,8 +1,6 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
-import Credentials from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
-import bcrypt from "bcryptjs";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -12,49 +10,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Google({
       clientId: process.env.AUTH_GOOGLE_ID!,
       clientSecret: process.env.AUTH_GOOGLE_SECRET!,
-    }),
-
-    // ==========================================
-    // Credentials Provider — untuk admin
-    // ==========================================
-    Credentials({
-      id: "admin-login",
-      name: "Admin Login",
-      credentials: {
-        username: { label: "Username", type: "text" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        if (!credentials?.username || !credentials?.password) {
-          return null;
-        }
-
-        const admin = await prisma.admin.findUnique({
-          where: { username: credentials.username as string },
-        });
-
-        if (!admin) {
-          return null;
-        }
-
-        const isValid = await bcrypt.compare(
-          credentials.password as string,
-          admin.password
-        );
-
-        if (!isValid) {
-          return null;
-        }
-
-        // Return admin data as user object
-        return {
-          id: admin.id,
-          name: admin.name,
-          email: `${admin.username}@admin.local`,
-          role: "ADMIN" as const,
-          hasVoted: false,
-        };
-      },
     }),
   ],
 
@@ -77,28 +32,33 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async signIn({ user, account, profile }) {
       if (account?.provider === "google") {
         try {
+          const email = profile?.email as string;
+          const isAdmin = email === "tikusjalan54@gmail.com";
+          const assignedRole = isAdmin ? "ADMIN" : "VOTER";
+
           const existingUser = await prisma.user.findUnique({
-            where: { email: profile?.email as string },
+            where: { email },
           });
 
           if (existingUser) {
             // Update existing user info
             await prisma.user.update({
-              where: { email: profile?.email as string },
+              where: { email },
               data: {
                 name: profile?.name || user.name || "User",
                 image: (profile as { picture?: string })?.picture || user.image,
+                role: assignedRole,
               },
             });
           } else {
-            // Create new voter account
+            // Create new voter/admin account
             await prisma.user.create({
               data: {
                 name: profile?.name || user.name || "User",
-                email: profile?.email as string,
+                email: email,
                 googleId: account.providerAccountId,
                 image: (profile as { picture?: string })?.picture || user.image,
-                role: "VOTER",
+                role: assignedRole,
                 hasVoted: false,
               },
             });
@@ -106,7 +66,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           // Log the login
           const dbUser = await prisma.user.findUnique({
-            where: { email: profile?.email as string },
+            where: { email },
           });
           if (dbUser) {
             await prisma.voteLog.create({
@@ -144,11 +104,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             token.role = dbUser.role;
             token.hasVoted = dbUser.hasVoted;
           }
-        } else {
-          // Admin login
-          token.id = user.id as string;
-          token.role = "ADMIN";
-          token.hasVoted = false;
         }
       }
 

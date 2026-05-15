@@ -106,6 +106,10 @@ export default async function AdminPage() {
               description: log.description || ""
             }))}
             results={results}
+            settings={settings ? { 
+              startTime: settings.startTime.toISOString(), 
+              endTime: settings.endTime.toISOString() 
+            } : undefined}
           />
         </div>
       </main>
