@@ -35,8 +35,8 @@ export default async function Home() {
   // Fallback settings if DB is empty/failing
   const fallbackDate = new Date();
   const fallbackEndDate = new Date(fallbackDate.getTime() + 86400000);
-  const startTime = settings?.startTime.toISOString() || fallbackDate.toISOString();
-  const endTime = settings?.endTime.toISOString() || fallbackEndDate.toISOString();
+  const startTime = settings?.startTime ? new Date(settings.startTime).toISOString() : fallbackDate.toISOString();
+  const endTime = settings?.endTime ? new Date(settings.endTime).toISOString() : fallbackEndDate.toISOString();
   const isOpen = settings?.isOpen || false;
  
   return (
