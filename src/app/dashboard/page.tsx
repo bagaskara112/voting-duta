@@ -29,23 +29,7 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  // Admins should probably have a separate dashboard, but for now we handle them here
-  if (session.user.role === "ADMIN") {
-    // Phase 5 will handle real admin panel. For now, just show a message.
-    return (
-      <div className={styles.dashboardContainer}>
-        <div className={styles.mainContent}>
-          <div className="container">
-            <div className={styles.statusBanner}>
-              <h2 className={styles.statusTitle}>Selamat Datang, Admin</h2>
-              <p className={styles.statusText}>Panel Admin sedang dalam tahap pengembangan (Phase 5).</p>
-              <LogoutButton />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+
 
   const { user, settings, candidates } = await getDashboardData(session.user.id);
 
