@@ -73,7 +73,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               data: {
                 userId: dbUser.id,
                 action: "login",
-                description: `User logged in via Google: ${profile?.email}`,
+                description: `${dbUser.name} telah masuk ke sistem.`,
               },
             });
           }
