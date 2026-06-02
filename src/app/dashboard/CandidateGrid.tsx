@@ -24,6 +24,9 @@ export default function CandidateGrid({ candidates, hasVoted, isOpen }: Candidat
   // Notification State
   const [notification, setNotification] = useState<{ message: string; type: "error" | "success" } | null>(null);
 
+  // Photo Preview State
+  const [previewPhoto, setPreviewPhoto] = useState<string | null>(null);
+
   const handleSelectClick = (candidate: Candidate) => {
     if (hasVoted || !isOpen) return;
     setSelectedCandidate(candidate);
@@ -68,15 +71,32 @@ export default function CandidateGrid({ candidates, hasVoted, isOpen }: Candidat
         {candidates.map((candidate) => (
           <div key={candidate.id} className={styles.card}>
             {/* Photo Container */}
-            <div className={styles.photoContainer}>
+            <div 
+              className={styles.photoContainer}
+              onClick={() => candidate.photo && setPreviewPhoto(candidate.photo)}
+              title={candidate.photo ? "Klik untuk melihat foto" : ""}
+            >
               {candidate.photo ? (
-                <Image 
-                  src={candidate.photo} 
-                  alt={candidate.name} 
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  className={styles.candidatePhoto}
-                />
+                <>
+                  <Image 
+                    src={candidate.photo} 
+                    alt={candidate.name} 
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className={styles.candidatePhoto}
+                  />
+                  <div className={styles.zoomOverlay}>
+                    <span className={styles.zoomIcon}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        <line x1="11" y1="8" x2="11" y2="14"></line>
+                        <line x1="8" y1="11" x2="14" y2="11"></line>
+                      </svg>
+                      Lihat Foto
+                    </span>
+                  </div>
+                </>
               ) : (
                 <div className={styles.photoPlaceholder}>
                   {candidate.order.toString().padStart(2, "0")}
@@ -106,6 +126,34 @@ export default function CandidateGrid({ candidates, hasVoted, isOpen }: Candidat
           </div>
         ))}
       </div>
+
+      {/* Photo Preview Overlay */}
+      {previewPhoto && (
+        <div 
+          className={styles.photoPreviewOverlay}
+          onClick={() => setPreviewPhoto(null)}
+        >
+          <button 
+            className={styles.closePreviewButton}
+            onClick={(e) => {
+              e.stopPropagation();
+              setPreviewPhoto(null);
+            }}
+            aria-label="Tutup preview"
+          >
+            &times;
+          </button>
+          <div className={styles.photoPreviewContainer} onClick={(e) => e.stopPropagation()}>
+            <Image 
+              src={previewPhoto} 
+              alt="Preview" 
+              fill
+              style={{ objectFit: "contain" }}
+              sizes="100vw"
+            />
+          </div>
+        </div>
+      )}
 
       {/* Confirmation Modal */}
       <Modal
