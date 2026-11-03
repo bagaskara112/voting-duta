@@ -108,7 +108,11 @@ export default async function AdminPage() {
             results={results}
             settings={settings ? { 
               startTime: settings.startTime.toISOString(), 
-              endTime: settings.endTime.toISOString() 
+              endTime: settings.endTime.toISOString(),
+              isMaintenance: settings.isMaintenance,
+              maintenanceTitle: settings.maintenanceTitle,
+              maintenanceMessage: settings.maintenanceMessage,
+              maintenanceSecret: settings.maintenanceSecret,
             } : undefined}
           />
         </div>

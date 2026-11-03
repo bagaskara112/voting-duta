@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./admin.module.css";
 import CandidateManager from "./CandidateManager";
 import { Candidate } from "@/generated/prisma";
-import { updateVotingSchedule, toggleVotingStatus } from "./actions";
+import { updateVotingSchedule, toggleVotingStatus, updateMaintenanceSettings, toggleMaintenanceStatus } from "./actions";
 
 interface LogEntry {
   id: string;
@@ -31,6 +31,10 @@ interface AdminDashboardProps {
   settings?: {
     startTime: string;
     endTime: string;
+    isMaintenance?: boolean;
+    maintenanceTitle?: string | null;
+    maintenanceMessage?: string | null;
+    maintenanceSecret?: string | null;
   };
 }
 
@@ -54,16 +58,88 @@ export default function AdminDashboard({
   );
   const [isUpdatingSchedule, setIsUpdatingSchedule] = useState(false);
 
+  // State for Maintenance Mode
+  const [isMaintenance, setIsMaintenance] = useState(settings?.isMaintenance ?? false);
+  const [maintenanceTitle, setMaintenanceTitle] = useState(settings?.maintenanceTitle || "Akses Ditutup");
+  const [maintenanceMessage, setMaintenanceMessage] = useState(
+    settings?.maintenanceMessage ||
+    "Terima kasih atas partisipasi Anda. Sesi aplikasi telah berakhir dan sistem saat ini ditutup untuk mencegah penyalahgunaan data."
+  );
+  const [maintenanceSecret, setMaintenanceSecret] = useState(settings?.maintenanceSecret || "panitia2026");
+  const [isUpdatingMaintenance, setIsUpdatingMaintenance] = useState(false);
+  const [copiedBypass, setCopiedBypass] = useState(false);
+  const [origin, setOrigin] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setOrigin(window.location.origin);
+    }
+  }, []);
+
   const handleUpdateSchedule = async () => {
     if (!startTime || !endTime) return alert("Pilih tanggal mulai dan selesai!");
     setIsUpdatingSchedule(true);
     try {
       const res = await updateVotingSchedule(new Date(startTime).toISOString(), new Date(endTime).toISOString());
       if (res.success) alert("Jadwal pemilihan berhasil diperbarui!");
-    } catch (error) {
+    } catch {
       alert("Terjadi kesalahan saat memperbarui jadwal.");
     }
     setIsUpdatingSchedule(false);
+  };
+
+  const handleQuickToggleMaintenance = async () => {
+    const nextState = !isMaintenance;
+    const confirmMsg = nextState
+      ? "Apakah Anda yakin ingin MENGAKTIFKAN mode pemeliharaan?\n\nSitus publik akan dialihkan ke halaman 'Akses Ditutup', kecuali bagi yang memiliki link/kode akses khusus."
+      : "Apakah Anda yakin ingin MENONAKTIFKAN mode pemeliharaan?\n\nSitus akan kembali dibuka dan dapat diakses publik.";
+    
+    if (!confirm(confirmMsg)) return;
+
+    setIsUpdatingMaintenance(true);
+    try {
+      const res = await toggleMaintenanceStatus(nextState);
+      if (res.success) {
+        setIsMaintenance(nextState);
+        alert(nextState ? "Mode Pemeliharaan AKTIF! Situs ditutup untuk publik." : "Mode Pemeliharaan DINONAKTIFKAN! Situs dibuka kembali.");
+      }
+    } catch {
+      alert("Gagal mengubah status pemeliharaan.");
+    } finally {
+      setIsUpdatingMaintenance(false);
+    }
+  };
+
+  const handleSaveMaintenanceSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!maintenanceSecret.trim()) {
+      return alert("Kode rahasia bypass tidak boleh kosong!");
+    }
+
+    setIsUpdatingMaintenance(true);
+    try {
+      const res = await updateMaintenanceSettings({
+        isMaintenance,
+        maintenanceTitle: maintenanceTitle.trim() || "Akses Ditutup",
+        maintenanceMessage: maintenanceMessage.trim(),
+        maintenanceSecret: maintenanceSecret.trim(),
+      });
+      if (res.success) {
+        alert("Pengaturan mode pemeliharaan berhasil disimpan!");
+      }
+    } catch {
+      alert("Terjadi kesalahan saat menyimpan pengaturan pemeliharaan.");
+    } finally {
+      setIsUpdatingMaintenance(false);
+    }
+  };
+
+  const bypassUrl = `${origin || ""}/api/maintenance/bypass?key=${encodeURIComponent(maintenanceSecret)}`;
+
+  const handleCopyBypassLink = () => {
+    navigator.clipboard.writeText(bypassUrl);
+    setCopiedBypass(true);
+    setTimeout(() => setCopiedBypass(false), 2500);
   };
 
   // Calculate Pie Chart logic
@@ -96,6 +172,12 @@ export default function AdminDashboard({
           onClick={() => setActiveTab("export")}
         >
           Laporan & Ekspor
+        </button>
+        <button 
+          className={`${styles.tabButton} ${activeTab === "maintenance" ? styles.activeTab : ""}`}
+          onClick={() => setActiveTab("maintenance")}
+        >
+          Mode Pemeliharaan {isMaintenance && <span style={{ marginLeft: "6px", color: "#ef4444", fontWeight: "bold" }}>● ON</span>}
         </button>
       </div>
 
@@ -246,6 +328,122 @@ export default function AdminDashboard({
               </svg>
               Download Laporan CSV
             </a>
+          </div>
+        </div>
+      )}
+
+      {activeTab === "maintenance" && (
+        <div className="animate-fade-in">
+          <div className={styles.maintenanceCard}>
+            {/* Status Banner */}
+            <div className={`${styles.maintenanceStatusBanner} ${isMaintenance ? styles.maintenanceActiveBanner : styles.maintenanceInactiveBanner}`}>
+              <div>
+                <h3 style={{ margin: "0 0 5px 0", fontSize: "1.1rem" }}>
+                  Status Mode Pemeliharaan: <strong>{isMaintenance ? "AKTIF (Situs Ditutup)" : "NONAKTIF (Situs Terbuka)"}</strong>
+                </h3>
+                <p style={{ margin: 0, fontSize: "0.9rem" }}>
+                  {isMaintenance 
+                    ? "Pengunjung umum dialihkan ke halaman Akses Ditutup. Hanya pengguna dengan izin/link bypass yang bisa mengakses web."
+                    : "Situs web beroperasi normal dan dapat diakses oleh publik."}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleQuickToggleMaintenance}
+                disabled={isUpdatingMaintenance}
+                className={`${styles.maintenanceToggleBtn} ${isMaintenance ? styles.maintenanceToggleBtnOn : styles.maintenanceToggleBtnOff}`}
+              >
+                {isUpdatingMaintenance ? "Memproses..." : isMaintenance ? "Matikan Maintenance" : "Aktifkan Maintenance"}
+              </button>
+            </div>
+
+            {/* Bypass Link Box */}
+            <div className={styles.bypassBox}>
+              <h4 style={{ margin: "0 0 8px 0", color: "var(--color-primary-dark)", display: "flex", alignItems: "center", gap: "8px" }}>
+                <span>🔑</span> Akses Khusus untuk Panitia / Orang Tertentu
+              </h4>
+              <p style={{ fontSize: "0.9rem", color: "var(--color-text-light)", margin: "0 0 12px 0", lineHeight: "1.5" }}>
+                Bagikan tautan ini ke orang tertentu (panitia, rektorat, tester). Ketika mereka membuka tautan ini, browser mereka otomatis diberikan akses bypass tanpa harus mendaftarkan akun satu per satu.
+              </p>
+              <div className={styles.bypassUrlDisplay}>
+                <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {bypassUrl}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleCopyBypassLink}
+                  className={styles.copyBtn}
+                >
+                  {copiedBypass ? "✓ Tersalin!" : "Salin Link Akses"}
+                </button>
+              </div>
+            </div>
+
+            {/* Form Settings */}
+            <form onSubmit={handleSaveMaintenanceSettings}>
+              <h4 style={{ margin: "25px 0 15px 0", color: "var(--color-primary-dark)" }}>
+                Kustomisasi Halaman Pemeliharaan
+              </h4>
+
+              <div style={{ marginBottom: "20px" }}>
+                <label style={{ display: "block", marginBottom: "6px", fontWeight: "bold", fontSize: "0.9rem" }}>
+                  Kode Rahasia Bypass (Passcode)
+                </label>
+                <input
+                  type="text"
+                  value={maintenanceSecret}
+                  onChange={(e) => setMaintenanceSecret(e.target.value)}
+                  placeholder="Contoh: panitia2026"
+                  required
+                  className={styles.inputField}
+                  style={{ width: "100%", maxWidth: "400px" }}
+                />
+                <small style={{ display: "block", color: "var(--color-text-light)", marginTop: "4px" }}>
+                  Kode ini dipakai pada tautan bypass dan juga bisa diketik manual di halaman pemeliharaan.
+                </small>
+              </div>
+
+              <div style={{ marginBottom: "20px" }}>
+                <label style={{ display: "block", marginBottom: "6px", fontWeight: "bold", fontSize: "0.9rem" }}>
+                  Judul Halaman Pemeliharaan
+                </label>
+                <input
+                  type="text"
+                  value={maintenanceTitle}
+                  onChange={(e) => setMaintenanceTitle(e.target.value)}
+                  placeholder="Akses Ditutup"
+                  required
+                  className={styles.inputField}
+                  style={{ width: "100%" }}
+                />
+              </div>
+
+              <div style={{ marginBottom: "25px" }}>
+                <label style={{ display: "block", marginBottom: "6px", fontWeight: "bold", fontSize: "0.9rem" }}>
+                  Pesan / Penjelasan untuk Pengunjung
+                </label>
+                <textarea
+                  rows={4}
+                  value={maintenanceMessage}
+                  onChange={(e) => setMaintenanceMessage(e.target.value)}
+                  placeholder="Tulis pesan alasan penutupan akses di sini..."
+                  required
+                  className={styles.inputField}
+                  style={{ width: "100%", resize: "vertical", fontFamily: "inherit" }}
+                />
+              </div>
+
+              <div style={{ display: "flex", gap: "15px" }}>
+                <button
+                  type="submit"
+                  disabled={isUpdatingMaintenance}
+                  className={styles.primaryBtn}
+                  style={{ padding: "12px 25px" }}
+                >
+                  {isUpdatingMaintenance ? "Menyimpan..." : "Simpan Pengaturan"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

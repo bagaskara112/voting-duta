@@ -3,12 +3,57 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { invalidateMaintenanceCache } from "@/lib/maintenance";
 
 async function verifyAdmin() {
   const session = await auth();
   if (!session?.user || session.user.role !== "ADMIN") {
     throw new Error("Unauthorized");
   }
+}
+
+export async function toggleMaintenanceStatus(isMaintenance: boolean) {
+  await verifyAdmin();
+  
+  await prisma.votingSetting.updateMany({
+    data: { isMaintenance }
+  });
+  
+  invalidateMaintenanceCache();
+  
+  revalidatePath("/");
+  revalidatePath("/admin");
+  revalidatePath("/maintenance");
+  revalidatePath("/dashboard");
+  revalidatePath("/results");
+  return { success: true, isMaintenance };
+}
+
+export async function updateMaintenanceSettings(data: {
+  isMaintenance: boolean;
+  maintenanceTitle: string;
+  maintenanceMessage: string;
+  maintenanceSecret: string;
+}) {
+  await verifyAdmin();
+  
+  await prisma.votingSetting.updateMany({
+    data: {
+      isMaintenance: data.isMaintenance,
+      maintenanceTitle: data.maintenanceTitle,
+      maintenanceMessage: data.maintenanceMessage,
+      maintenanceSecret: data.maintenanceSecret,
+    }
+  });
+  
+  invalidateMaintenanceCache();
+  
+  revalidatePath("/");
+  revalidatePath("/admin");
+  revalidatePath("/maintenance");
+  revalidatePath("/dashboard");
+  revalidatePath("/results");
+  return { success: true };
 }
 
 export async function toggleVotingStatus(isOpen: boolean) {

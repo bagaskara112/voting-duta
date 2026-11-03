@@ -116,14 +116,18 @@ model VoteLog {
 // Pengaturan voting (jadwal, status buka/tutup)
 // ==========================================
 model VotingSetting {
-  id          String   @id @default(cuid())
-  isOpen      Boolean  @default(false)
-  startTime   DateTime
-  endTime     DateTime
-  title       String   @default("Pemilihan Duta Universitas 2026")
-  description String?  @db.Text
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                 String   @id @default(cuid())
+  isOpen             Boolean  @default(false)
+  startTime          DateTime
+  endTime            DateTime
+  title              String   @default("Pemilihan Duta Universitas 2026")
+  description        String?  @db.Text
+  isMaintenance      Boolean  @default(false)
+  maintenanceTitle   String?  @default("Akses Ditutup")
+  maintenanceMessage String?  @db.Text
+  maintenanceSecret  String?  @default("panitia2026")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
   @@map("voting_settings")
 }

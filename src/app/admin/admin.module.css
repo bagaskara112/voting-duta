@@ -454,3 +454,103 @@
     border-left-color: var(--color-primary);
   }
 }
+
+/* Maintenance Mode Controls */
+.maintenanceCard {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 30px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+}
+
+.maintenanceStatusBanner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-radius: var(--radius-md);
+  margin-bottom: 25px;
+  transition: all var(--transition-fast);
+}
+
+.maintenanceActiveBanner {
+  background-color: #fef3c7;
+  border: 1px solid #f59e0b;
+  color: #92400e;
+}
+
+.maintenanceInactiveBanner {
+  background-color: #ecfdf5;
+  border: 1px solid #10b981;
+  color: #065f46;
+}
+
+.maintenanceToggleBtn {
+  padding: 10px 20px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  border: none;
+  transition: all var(--transition-fast);
+}
+
+.maintenanceToggleBtnOn {
+  background-color: #ef4444;
+  color: white;
+}
+
+.maintenanceToggleBtnOn:hover {
+  background-color: #dc2626;
+}
+
+.maintenanceToggleBtnOff {
+  background-color: #10b981;
+  color: white;
+}
+
+.maintenanceToggleBtnOff:hover {
+  background-color: #059669;
+}
+
+.bypassBox {
+  background-color: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.bypassUrlDisplay {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+  background: white;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid #e2e8f0;
+  font-family: monospace;
+  font-size: 0.9rem;
+  word-break: break-all;
+}
+
+.copyBtn {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+}
+
+.copyBtn:hover {
+  background-color: var(--color-primary-dark);
+}
+
